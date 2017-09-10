@@ -1,0 +1,31 @@
+# This needs at least compose 1.6.0
+version: '2'
+
+services:
+  postgresdata:
+    image: postgres:9.5
+    command: /bin/true
+
+  postgres:
+    image: postgres:9.5
+    volumes_from:
+      - postgresdata
+    environment:
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_USER: huginn
+
+  huginn:
+    image: huginn/huginn
+    restart: always
+    environment:
+      HUGINN_DATABASE_NAME: huginn_production
+      HUGINN_DATABASE_USERNAME: huginn
+      HUGINN_DATABASE_PASSWORD: mypassword
+      DATABASE_ADAPTER: postgresql
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      INTENTIONALLY_SLEEP: 10
+    ports:
+      - 3000:3000
+    links:
+      - postgres

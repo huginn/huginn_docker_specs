@@ -64,7 +64,10 @@ class ContainerTester
       visit '/'
     rescue Capybara::Poltergeist::StatusFailError
       i += 1
-      raise 'Container did not boot witnin 60 seconds' if i >= 120
+      if i >= 120
+        puts logs
+        raise 'Container did not boot witnin 120 seconds'
+      end
       sleep 1
       retry
     end

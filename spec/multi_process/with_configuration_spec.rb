@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-RSpec.describe 'multi-process linked to mysql database without seeding', type: :feature do
+RSpec.describe 'multi-process linked to mysql database with configuration', type: :feature do
   before(:all) do
-    @ct = ContainerTester.new(compose_file: 'multi_process/without_seeding.yml')
+    @ct = ContainerTester.new(compose_file: 'multi_process/with_configuration.yml')
     @ct.start!
   end
 
@@ -24,5 +24,10 @@ RSpec.describe 'multi-process linked to mysql database without seeding', type: :
 
   it 'does not seed the database' do
     expect(@ct).not_to have_log("NOTE: The example 'SF Weather Agent' will not work until you edit it and put in a free API key from http://www.wunderground.com/weather/api/")
+  end
+
+  it 'does install the specified agent gems' do
+    expect(@ct).to have_log('huginn_website_metadata_agent')
+    expect(@ct).to have_log('huginn_readability_agent')
   end
 end

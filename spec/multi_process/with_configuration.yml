@@ -28,6 +28,7 @@ services:
       MYSQL_PORT_3306_TCP_PORT: 3306
       DO_NOT_SEED: 'true'
       DO_NOT_CREATE_DATABASE: 'true'
+      ADDITIONAL_GEMS: "huginn_website_metadata_agent(github: kreuzwerker/DKT.huginn_website_metadata_agent),huginn_readability_agent(github: kreuzwerker/DKT.huginn_readability_agent)"
     ports:
       - 3000:3000
     links:

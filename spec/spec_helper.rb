@@ -1,33 +1,6 @@
 require 'docker/compose'
 require 'pp'
 
-module Backticks
-  class Command
-    def initialize(pid, stdin, stdout, stderr, interactive:false)
-      @pid = pid
-      @stdin = stdin
-      @stdout = stdout
-      @stderr = stderr
-      @interactive = !!interactive
-      @tap = nil
-      @status = nil
-      @captured_input  = String.new.force_encoding(Encoding::BINARY)
-      @captured_output = String.new.force_encoding(Encoding::BINARY)
-      @captured_error  = String.new.force_encoding(Encoding::BINARY)
-    end
-  end
-end
-
-
-module Docker::Compose
-  class Session
-    def logs(*services)
-      run!('logs', services)
-    end
-  end
-end
-
-
 require 'rspec'
 require 'capybara/poltergeist'
 require 'capybara/rspec'
