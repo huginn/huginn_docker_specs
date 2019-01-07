@@ -11,7 +11,7 @@ services:
     volumes_from:
       - postgresdata
     environment:
-      POSTGRES_PASSWORD: myhuginnpassword
+      POSTGRES_PASSWORD: myhuginn=password
       POSTGRES_USER: huginn
 
   huginn:
@@ -21,7 +21,7 @@ services:
       DATABASE_ADAPTER: postgresql
       DATABASE_NAME: huginn_production
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginnpassword
+      DATABASE_PASSWORD: myhuginn=password
       POSTGRES_PORT_5432_TCP_ADDR: postgres
       POSTGRES_PORT_5432_TCP_PORT: 5432
     ports:
@@ -36,7 +36,7 @@ services:
       DATABASE_ADAPTER: postgresql
       DATABASE_NAME: huginn_production
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginnpassword
+      DATABASE_PASSWORD: myhuginn=password
       POSTGRES_PORT_5432_TCP_ADDR: postgres
       POSTGRES_PORT_5432_TCP_PORT: 5432
     links:
@@ -51,7 +51,7 @@ services:
       DATABASE_ADAPTER: postgresql
       DATABASE_NAME: huginn_production
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginnpassword
+      DATABASE_PASSWORD: myhuginn=password
       POSTGRES_PORT_5432_TCP_ADDR: postgres
       POSTGRES_PORT_5432_TCP_PORT: 5432
     links:
@@ -66,7 +66,7 @@ services:
       DATABASE_ADAPTER: postgresql
       DATABASE_NAME: huginn_production
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginnpassword
+      DATABASE_PASSWORD: myhuginn=password
       POSTGRES_PORT_5432_TCP_ADDR: postgres
       POSTGRES_PORT_5432_TCP_PORT: 5432
     links:

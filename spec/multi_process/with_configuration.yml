@@ -14,7 +14,7 @@ services:
       MYSQL_ROOT_PASSWORD: myrootpassword
       MYSQL_DATABASE: huginn_production
       MYSQL_USER: huginn
-      MYSQL_PASSWORD: myhuginnpassword
+      MYSQL_PASSWORD: myhuginn=password
 
   huginn:
     image: huginn/huginn
@@ -22,7 +22,7 @@ services:
     environment:
       HUGINN_DATABASE_NAME: huginn_production
       HUGINN_DATABASE_USERNAME: huginn
-      HUGINN_DATABASE_PASSWORD: myhuginnpassword
+      HUGINN_DATABASE_PASSWORD: myhuginn=password
       INTENTIONALLY_SLEEP: 10
       MYSQL_PORT_3306_TCP_ADDR: mysql
       MYSQL_PORT_3306_TCP_PORT: 3306
