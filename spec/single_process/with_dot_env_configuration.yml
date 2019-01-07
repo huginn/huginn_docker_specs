@@ -24,6 +24,8 @@ services:
       DATABASE_PASSWORD: myhuginnpassword
       POSTGRES_PORT_5432_TCP_ADDR: postgres
       POSTGRES_PORT_5432_TCP_PORT: 5432
+      # Kubernetes assigs this variable when the container is named "huginn"
+      HUGINN_PORT: tcp://10.245.220.130:3000
     env_file:
       - .env
     ports:
