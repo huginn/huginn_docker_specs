@@ -1,4 +1,4 @@
-RSpec.shared_context 'default configuration' do |compose_file:|
+RSpec.shared_context 'default configuration' do |compose_file:, database_should_exist: false|
   before(:all) do
     @ct = ContainerTester.new(compose_file: compose_file)
     @ct.start!
@@ -24,11 +24,17 @@ RSpec.shared_context 'default configuration' do |compose_file:|
     expect(@ct).to have_log("Generating random APP_SECRET_TOKEN.")
   end
 
-  it 'creates the database' do
-    expect(@ct).to have_log("Created database 'huginn_production'")
-  end
+  if database_should_exist
+    it 'reuses the database' do
+      expect(@ct).to have_log("Database 'huginn_production' already exists")
+    end
+  else
+    it 'creates the database' do
+      expect(@ct).to have_log("Created database 'huginn_production'")
+    end
 
-  it 'migrates the datbaase' do
-    expect(@ct).to have_log("Migrating to")
+    it 'migrates the datbaase' do
+      expect(@ct).to have_log("Migrating to")
+    end
   end
 end

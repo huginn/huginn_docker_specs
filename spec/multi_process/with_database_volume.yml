@@ -1,0 +1,11 @@
+# This needs at least compose 1.6.0
+version: '2'
+
+services:
+  huginn:
+    image: huginn/huginn
+    restart: always
+    volumes:
+      - ../mysql-data:/var/lib/mysql
+    ports:
+      - 3000:3000

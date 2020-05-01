@@ -22,6 +22,10 @@ RSpec.describe 'multi-process linked to mysql database with configuration', type
     expect(@ct).not_to have_log("Database 'huginn_production' already exists")
   end
 
+  it 'uses the secret token from the configuration' do
+    expect(@ct).not_to have_log("Generating random APP_SECRET_TOKEN.")
+  end
+
   it 'does not seed the database' do
     expect(@ct).not_to have_log("NOTE: The example 'SF Weather Agent' will not work until you edit it and put in a free API key from http://www.wunderground.com/weather/api/")
   end
