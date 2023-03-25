@@ -2,14 +2,18 @@ require 'docker/compose'
 require 'pp'
 
 require 'rspec'
-require 'capybara/poltergeist'
 require 'capybara/rspec'
+require "capybara/cuprite"
+
 
 Dir[File.join(__dir__, "support/**/*.rb")].each { |f| require f }
 
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
+end
 Capybara.configure do |config|
   config.run_server = false
-  config.default_driver = :poltergeist
+  config.default_driver = :cuprite
   config.app_host = 'http://localhost:3000'
 end
 
@@ -68,4 +72,6 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   Kernel.srand config.seed
+
+  config.example_status_persistence_file_path = 'spec/support/examples.txt'
 end

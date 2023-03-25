@@ -60,16 +60,16 @@ class ContainerTester
 
   def wait_until_started
     i = 0
-    begin
-      visit '/'
-    rescue Capybara::Poltergeist::StatusFailError
+    loop do
+      visit "/"
       i += 1
+      break if page.status_code
+
       if i >= 120
         puts logs
         raise 'Container did not boot witnin 120 seconds'
       end
       sleep 1
-      retry
     end
   end
 

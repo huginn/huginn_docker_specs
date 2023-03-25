@@ -3,6 +3,6 @@ source "https://rubygems.org"
 
 gem 'rake'
 gem 'rspec'
-gem 'poltergeist'
 gem 'docker-compose'
 gem 'capybara'
+gem "cuprite"
