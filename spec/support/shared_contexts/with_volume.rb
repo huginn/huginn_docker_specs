@@ -1,16 +1,14 @@
 RSpec.shared_context 'with volume' do |data_source: nil|
   before(:all) do
-    volume = File.join(Dir.pwd, 'spec', 'mysql-data')
-    `sudo rm -rf #{volume}`
-    FileUtils.mkdir_p volume
-    if data_source
-      `sudo cp -r #{File.join(Dir.pwd, data_source)}/* #{volume}`
-    end
-    `sudo chown 1001 -R #{volume}`
+    `docker volume rm huginn-docker-specs-mysql`
+    `docker volume create huginn-docker-specs-mysql`
+     if data_source
+      `docker run -it --rm -v $(pwd)/data:/data -v huginn-docker-specs-mysql:/var/lib/mysql busybox tar xf /data/#{data_source} -C /var/lib/mysql`
+     end
+    `docker run -it --rm -v $(pwd)/data:/data -v huginn-docker-specs-mysql:/var/lib/mysql busybox chown -R 1001 /var/lib/mysql`
   end
 
   after(:all) do
-    volume = File.join(Dir.pwd, 'spec', 'mysql-data')
-    `sudo rm -rf #{volume}`
+    `docker volume rm huginn-docker-specs-mysql`
   end
 end

@@ -6,6 +6,9 @@ services:
     image: huginn/huginn
     restart: always
     volumes:
-      - ../mysql-data:/var/lib/mysql
+      - huginn-docker-specs-mysql:/var/lib/mysql
     ports:
       - 3000:3000
+volumes:
+  huginn-docker-specs-mysql:
+    external: true
