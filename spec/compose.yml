@@ -1,0 +1,59 @@
+services:
+  fixture:
+    image: nginx:stable-alpine
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: docker-specs-mysql
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD-SHELL', 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" -e "SELECT 1"']
+      interval: 2s
+      timeout: 5s
+      retries: 60
+      start_period: 20s
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_PASSWORD: docker-specs-postgres
+      POSTGRES_USER: huginn
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'huginn', '-d', 'postgres']
+      interval: 2s
+      timeout: 5s
+      retries: 60
+
+  multi_process:
+    image: ${HUGINN_MULTI_IMAGE:-ghcr.io/huginn/huginn:latest}
+    stop_grace_period: 1m
+    environment:
+      SEED_USERNAME: admin
+      SEED_PASSWORD: Docker specs password 2026
+    depends_on:
+      fixture:
+        condition: service_started
+    healthcheck:
+      test: ['CMD', 'ruby', '-rnet/http', '-e', 'exit(Net::HTTP.get_response(URI("http://127.0.0.1:3000/users/sign_in")).is_a?(Net::HTTPSuccess) ? 0 : 1)']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 20s
+
+  single_process:
+    extends:
+      service: multi_process
+    image: ${HUGINN_SINGLE_IMAGE:-ghcr.io/huginn/huginn-single-process:latest}
+
+  permissions:
+    image: busybox:1.37
+    user: '0:0'
+    command: ['chown', '-R', '1001:0', '/var/lib/mysql']
+    volumes:
+      - mysql-data:/var/lib/mysql

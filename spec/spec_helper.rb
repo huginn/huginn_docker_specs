@@ -1,5 +1,6 @@
-require 'docker/compose'
-require 'pp'
+require "json"
+require "net/http"
+require "pathname"
 
 require 'rspec'
 require 'capybara/rspec'
@@ -14,7 +15,6 @@ end
 Capybara.configure do |config|
   config.run_server = false
   config.default_driver = :cuprite
-  config.app_host = 'http://localhost:3000'
 end
 
 def root

@@ -1,74 +1,64 @@
-# This needs at least compose 1.6.0
-version: '2'
-
+---
 services:
-  postgresdata:
-    image: postgres:9.5
-    command: /bin/true
-
+  fixture:
+    extends:
+      file: "../compose.yml"
+      service: fixture
   postgres:
-    image: postgres:9.5
-    volumes_from:
-      - postgresdata
-    environment:
-      POSTGRES_PASSWORD: myhuginn=password
-      POSTGRES_USER: huginn
-
+    extends:
+      file: "../compose.yml"
+      service: postgres
   huginn:
-    image: huginn/huginn-single-process
-    restart: always
+    extends:
+      file: "../compose.yml"
+      service: single_process
     environment:
       DATABASE_ADAPTER: postgresql
-      DATABASE_NAME: huginn_production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginn=password
-      POSTGRES_PORT_5432_TCP_ADDR: postgres
-      POSTGRES_PORT_5432_TCP_PORT: 5432
+      DATABASE_PASSWORD: docker-specs-postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
-      - 3000:3000
-    links:
-      - postgres
-
-  huginn_schedule:
-    image: huginn/huginn-single-process
-    restart: always
+    - 127.0.0.1::3000
+  huginn_agent_runner:
+    extends:
+      file: "../compose.yml"
+      service: single_process
     environment:
       DATABASE_ADAPTER: postgresql
-      DATABASE_NAME: huginn_production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginn=password
-      POSTGRES_PORT_5432_TCP_ADDR: postgres
-      POSTGRES_PORT_5432_TCP_PORT: 5432
-    links:
-      - postgres
-    command: /scripts/init bin/schedule.rb
-
-
-  huginn_twitter_stream:
-    image: huginn/huginn-single-process
-    restart: always
+      DATABASE_PASSWORD: docker-specs-postgres
+      WORKER_CMD: bin/agent_runner.rb
+    ports: []
+    healthcheck:
+      disable: true
+    depends_on:
+      huginn:
+        condition: service_healthy
+  huginn_jobs:
+    extends:
+      file: "../compose.yml"
+      service: single_process
     environment:
       DATABASE_ADAPTER: postgresql
-      DATABASE_NAME: huginn_production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginn=password
-      POSTGRES_PORT_5432_TCP_ADDR: postgres
-      POSTGRES_PORT_5432_TCP_PORT: 5432
-    links:
-      - postgres
-    command: /scripts/init bin/twitter_stream.rb
-
-
-  huginn_dj1:
-    image: huginn/huginn-single-process
-    restart: always
-    environment:
-      DATABASE_ADAPTER: postgresql
-      DATABASE_NAME: huginn_production
-      DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginn=password
-      POSTGRES_PORT_5432_TCP_ADDR: postgres
-      POSTGRES_PORT_5432_TCP_PORT: 5432
-    links:
-      - postgres
-    command: /scripts/init script/delayed_job run
+      DATABASE_PASSWORD: docker-specs-postgres
+    ports: []
+    healthcheck:
+      disable: true
+    depends_on:
+      huginn:
+        condition: service_healthy
+    command:
+    - bash
+    - "-ec"
+    - source /scripts/setup_env; exec bundle exec bin/delayed_job_master -c config/delayed_job_master.rb
+volumes:
+  postgres-data: {}

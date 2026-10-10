@@ -1,14 +1,23 @@
-# This needs at least compose 1.6.0
-version: '2'
-
+---
 services:
+  fixture:
+    extends:
+      file: "../compose.yml"
+      service: fixture
+  permissions:
+    extends:
+      file: "../compose.yml"
+      service: permissions
   huginn:
-    image: huginn/huginn
-    restart: always
+    extends:
+      file: "../compose.yml"
+      service: multi_process
     volumes:
-      - huginn-docker-specs-mysql:/var/lib/mysql
+    - mysql-data:/var/lib/mysql
+    depends_on:
+      permissions:
+        condition: service_completed_successfully
     ports:
-      - 3000:3000
+    - 127.0.0.1::3000
 volumes:
-  huginn-docker-specs-mysql:
-    external: true
+  mysql-data: {}

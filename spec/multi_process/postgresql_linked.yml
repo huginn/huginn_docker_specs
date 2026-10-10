@@ -1,31 +1,27 @@
-# This needs at least compose 1.6.0
-version: '2'
-
+---
 services:
-  postgresdata:
-    image: postgres:9.5
-    command: /bin/true
-
+  fixture:
+    extends:
+      file: "../compose.yml"
+      service: fixture
   postgres:
-    image: postgres:9.5
-    volumes_from:
-      - postgresdata
-    environment:
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_USER: huginn
-
+    extends:
+      file: "../compose.yml"
+      service: postgres
   huginn:
-    image: huginn/huginn
-    restart: always
+    extends:
+      file: "../compose.yml"
+      service: multi_process
     environment:
-      HUGINN_DATABASE_NAME: huginn_production
-      HUGINN_DATABASE_USERNAME: huginn
-      HUGINN_DATABASE_PASSWORD: mypassword
       DATABASE_ADAPTER: postgresql
       DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      INTENTIONALLY_SLEEP: 10
+      DATABASE_PORT: '5432'
+      DATABASE_USERNAME: huginn
+      DATABASE_PASSWORD: docker-specs-postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
-      - 3000:3000
-    links:
-      - postgres
+    - 127.0.0.1::3000
+volumes:
+  postgres-data: {}

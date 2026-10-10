@@ -1,50 +1,49 @@
-# This needs at least compose 1.6.0
-version: '2'
-
+---
 services:
-  postgresdata:
-    image: postgres:9.5
-    command: /bin/true
-
+  fixture:
+    extends:
+      file: "../compose.yml"
+      service: fixture
   postgres:
-    image: postgres:9.5
-    volumes_from:
-      - postgresdata
-    environment:
-      POSTGRES_PASSWORD: myhuginnpassword
-      POSTGRES_USER: huginn
-
+    extends:
+      file: "../compose.yml"
+      service: postgres
   huginn:
-    image: huginn/huginn-single-process
-    restart: always
+    extends:
+      file: "../compose.yml"
+      service: single_process
     environment:
       DATABASE_ADAPTER: postgresql
-      DATABASE_NAME: huginn_production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginnpassword
-      POSTGRES_PORT_5432_TCP_ADDR: postgres
-      POSTGRES_PORT_5432_TCP_PORT: 5432
-      # Kubernetes assigs this variable when the container is named "huginn"
+      DATABASE_PASSWORD: docker-specs-postgres
       HUGINN_PORT: tcp://10.245.220.130:3000
     env_file:
-      - .env
+    - ".env"
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
-      - 3000:3000
-    links:
-      - postgres
-
+    - 127.0.0.1::3000
   huginn_threaded:
-    image: huginn/huginn-single-process
-    restart: always
+    extends:
+      file: "../compose.yml"
+      service: single_process
     environment:
       DATABASE_ADAPTER: postgresql
-      DATABASE_NAME: huginn_production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: '5432'
       DATABASE_USERNAME: huginn
-      DATABASE_PASSWORD: myhuginnpassword
-      POSTGRES_PORT_5432_TCP_ADDR: postgres
-      POSTGRES_PORT_5432_TCP_PORT: 5432
+      DATABASE_PASSWORD: docker-specs-postgres
+      WORKER_CMD: bin/threaded.rb
     env_file:
-      - .env
-    links:
-      - postgres
-    command: /scripts/init bin/threaded.rb
+    - ".env"
+    ports: []
+    healthcheck:
+      disable: true
+    depends_on:
+      huginn:
+        condition: service_healthy
+volumes:
+  postgres-data: {}

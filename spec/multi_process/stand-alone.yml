@@ -1,9 +1,12 @@
-# This needs at least compose 1.6.0
-version: '2'
-
+---
 services:
+  fixture:
+    extends:
+      file: "../compose.yml"
+      service: fixture
   huginn:
-    image: huginn/huginn
-    restart: always
+    extends:
+      file: "../compose.yml"
+      service: multi_process
     ports:
-      - 3000:3000
+    - 127.0.0.1::3000

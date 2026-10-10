@@ -19,6 +19,7 @@ RSpec.describe 'multi-process linked to mysql database with configuration', type
   end
 
   it 'does not try to create the database' do
+    expect(@ct).not_to have_log("Created database")
     expect(@ct).not_to have_log("Database 'huginn_production' already exists")
   end
 
@@ -27,11 +28,11 @@ RSpec.describe 'multi-process linked to mysql database with configuration', type
   end
 
   it 'does not seed the database' do
-    expect(@ct).not_to have_log("NOTE: The example 'SF Weather Agent' will not work until you edit it and put in a free API key from http://www.wunderground.com/weather/api/")
+    expect(@ct.records).to eq("users" => 0, "agents" => 0)
   end
 
   it 'does install the specified agent gems' do
-    expect(@ct).to have_log('huginn_website_metadata_agent')
-    expect(@ct).to have_log('huginn_readability_agent')
+    output = @ct.rails('puts Gem.loaded_specs.keys.grep(/\Ahuginn_(?:website_metadata|readability)_agent\z/)')
+    expect(output).to include("huginn_website_metadata_agent", "huginn_readability_agent")
   end
 end

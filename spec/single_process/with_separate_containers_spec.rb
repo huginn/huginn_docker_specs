@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe 'multi-process linked to postgresql database and separate containers', type: :feature do
+RSpec.describe 'single-process with separate AgentRunner and job containers', type: :feature do
   context 'with the default configuration' do
     include_context 'default configuration', compose_file: 'single_process/with_separate_containers.yml'
   end

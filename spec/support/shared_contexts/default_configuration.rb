@@ -10,6 +10,7 @@ RSpec.shared_context 'default configuration' do |compose_file:, database_should_
 
   it 'started all components' do
     @ct.login
+    @ct.prepare_agent
     @ct.run_agent(name: 'XKCD Source')
     @ct.verify_events(name: 'XKCD Source')
   end
@@ -33,7 +34,7 @@ RSpec.shared_context 'default configuration' do |compose_file:, database_should_
       expect(@ct).to have_log("Created database 'huginn_production'")
     end
 
-    it 'migrates the datbaase' do
+    it 'migrates the database' do
       expect(@ct).to have_log("Migrating to")
     end
   end
