@@ -23,7 +23,7 @@ GEM
       base64 (~> 0.2)
       concurrent-ruby (~> 1.1)
       websocket-driver (~> 0.7)
-    json (3.0.2)
+    json (3.1.0)
     matrix (0.4.3)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
